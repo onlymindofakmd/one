@@ -43,4 +43,16 @@ public class CommonService {
     public Map<String, Object> findOneBySql(String sql, Object ...args) {
         return dao.findOne(sql, args);
     }
+
+    public void save(String tableId, Map<String, Object> params) {
+        // TODO 这里的keys包含很多不需要的字段，后期测试需要看下能不能把不要的字段都删除掉。
+        Set<String> keys = params.keySet();
+        List<Object> values = new ArrayList<>();
+        values.add("uuid");
+        for (String key: keys) {
+            values.add(params.get(key));
+        }
+        String sql = TableUtil.makeAddSql(tableId, keys);
+        dao.addOrUpdate(sql, values.toArray());
+    }
 }

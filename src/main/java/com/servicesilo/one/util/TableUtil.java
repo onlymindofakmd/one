@@ -20,6 +20,28 @@ public class TableUtil {
         return null;
     }
 
+    public static String makeAddSql(String tableId, Set<String> keys) {
+        StringBuilder sb = new StringBuilder();
+        ServiceTable table = getTable(tableId);
+        assert table != null;
+        StringBuilder fields = new StringBuilder("uuid");
+        StringBuilder vs = new StringBuilder("?");
+        // 这里keys不做校验，keys的校验在拦截器中完成，后面在写。
+        for(String key: keys) {
+            fields.append(" , ").append(key);
+            vs.append(" , ?");
+        }
+
+        sb.append("insert into ")
+                .append(table.getTableCode())
+                .append("(")
+                .append(fields.toString())
+                .append(") values(")
+                .append(vs.toString())
+                .append(") ");
+        return sb.toString();
+    }
+
     public static String makeSearchSql(String tableId, Set<String> keys) {
         ServiceTable table = getTable(tableId);
         assert table != null;
