@@ -33,6 +33,7 @@ public class CommonService {
         return dao.find(sql, values.toArray());
     }
 
+
     public Map<String, Object> findById(String tableId, String uuid) {
         ServiceTable table = TableUtil.getTable(tableId);
         assert table != null;
