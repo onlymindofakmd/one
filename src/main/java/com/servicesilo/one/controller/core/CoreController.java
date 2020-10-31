@@ -25,6 +25,9 @@ public class CoreController {
         service.save(tableId, params);
     }
 
+    /**
+     *
+     */
     public void update() {
 
     }
