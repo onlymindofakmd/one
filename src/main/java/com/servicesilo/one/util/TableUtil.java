@@ -3,6 +3,8 @@ package com.servicesilo.one.util;
 import com.servicesilo.one.dict.TrueOrFalse;
 import com.servicesilo.one.model.ServiceTable;
 import com.servicesilo.one.model.ServiceTableCol;
+import com.servicesilo.one.model.ServiceUser;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,13 +45,16 @@ public class TableUtil {
         return sb.toString();
     }
 
-    public static String makeSearchSql(String tableId, Set<String> keys) {
+    public static String makeSearchSql(String tableId,
+                                       String status,
+                                       Set<String> keys,
+                                       ServiceUser user) {
         ServiceTable table = getTable(tableId);
         assert table != null;
         String tableName =  table.getTableCode();
         List<ServiceTableCol> cols = table.getCols();
         StringBuilder sb = new StringBuilder();
-        sb.append("select uuid");
+        sb.append("select m.uuid");
 
         Map<String , String> filterMap = new HashMap<>();
 
@@ -64,7 +69,14 @@ public class TableUtil {
             }
         }
 
-        sb.append(" from ").append(tableName).append(" where 1=1");
+        sb.append(" from ").append(tableName)
+                .append(" as m left join service_workflow_record swr on m.uuid = swr.data_id ");
+
+        sb.append(" where 1=1");
+
+        if (!StringUtils.isEmpty(status)) {
+            sb.append(" swr.node_id = ? ");
+        }
 
         for (String key: keys) {
             String searchType = filterMap.get(key);
@@ -92,6 +104,8 @@ public class TableUtil {
             }
 
         }
+        //数据权限
+        sb.append(PermissionUtil.getPermission(user));
 
         return sb.toString();
     }

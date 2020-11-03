@@ -3,9 +3,11 @@ package com.servicesilo.one.service;
 import com.servicesilo.one.datasource.CommonDAO;
 import com.servicesilo.one.model.ServiceTable;
 import com.servicesilo.one.model.ServiceTableCol;
+import com.servicesilo.one.model.ServiceUser;
 import com.servicesilo.one.util.TableUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,14 +24,21 @@ public class CommonService {
      * 获取列表展示数据
      * @return 列表数据
      */
-    public List<Map<String, Object>> list(String tableId, Map<String, Object> params) {
+    public List<Map<String, Object>> list(String tableId,
+                                          String status,
+                                          Map<String, Object> params,
+                                          ServiceUser user) {
         // 这里需要确保这些key对应的值都不为空。
         Set<String> keys = params.keySet();
         List<Object> values = new ArrayList<>();
+        if (!StringUtils.isEmpty(status)) {
+            values.add(status);
+        }
         for (String key: keys) {
             values.add(params.get(key));
         }
-        String sql = TableUtil.makeSearchSql(tableId, keys);
+
+        String sql = TableUtil.makeSearchSql(tableId, status, keys, user);
         return dao.find(sql, values.toArray());
     }
 

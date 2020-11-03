@@ -2,13 +2,12 @@ package com.servicesilo.one.controller.core;
 
 import com.servicesilo.one.service.CommonService;
 import com.servicesilo.one.util.CommonRet;
+import com.servicesilo.one.util.RedisUtil;
 import com.servicesilo.one.util.RetUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -20,13 +19,17 @@ public class CoreController {
     @Autowired
     private CommonService service;
 
+    /**
+     * 保存服务
+     * @param params
+     */
     public void save(@RequestBody Map<String, Object> params) {
         String tableId = params.get("tableId").toString();
         service.save(tableId, params);
     }
 
     /**
-     * 测试提交
+     * 更新服务
      */
     public void update() {
 
@@ -37,15 +40,19 @@ public class CoreController {
     }
 
     /**
-     * 用于普通的保存服务
+     * 查询服务
      * @param params
      * @return
      */
     @ResponseBody
     @PostMapping(value = "/query")
-    public CommonRet query(@RequestBody Map<String, Object> params) {
-        String tableId = params.get("tableId").toString();
-        List<Map<String, Object>> results = service.list(tableId, params);
+    public CommonRet query(@RequestParam Map<String, Object> params) {
+        String tableId = params.remove("tableId").toString();
+        String status = params.remove("status").toString();
+        String token = params.remove("access_token").toString();
+        System.out.println(tableId+ status + token);
+        List<Map<String, Object>> results = service.list(tableId,
+                status, params, RedisUtil.getUser(token));
         return RetUtil.success(results);
     }
 
@@ -60,11 +67,4 @@ public class CoreController {
 
     }
 
-    public void prev() {
-
-    }
-
-    public void stop() {
-        
-    }
 }
