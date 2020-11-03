@@ -1,5 +1,6 @@
 package com.servicesilo.one.controller.core;
 
+import com.servicesilo.one.model.ServiceNodeLink;
 import com.servicesilo.one.service.CommonService;
 import com.servicesilo.one.util.CommonRet;
 import com.servicesilo.one.util.RedisUtil;
@@ -54,6 +55,14 @@ public class CoreController {
         List<Map<String, Object>> results = service.list(tableId,
                 status, params, RedisUtil.getUser(token));
         return RetUtil.success(results);
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/handleLink")
+    public CommonRet handleLink(@RequestParam Map<String, Object> params) {
+        String linkId = params.get("link_id").toString();
+        ServiceNodeLink link = RedisUtil.getLink(linkId);
+        return RetUtil.success();
     }
 
     /**
