@@ -18,7 +18,7 @@ import java.util.Map;
 public class CommonDAO {
 
     @Autowired
-    private JdbcTemplate template;
+    protected JdbcTemplate template;
 
     public void addOrUpdate(String sql, Object ...params) {
         template.update(sql, params);
@@ -45,7 +45,6 @@ public class CommonDAO {
     }
 
     public Map<String, Object> findOne(String sql, Object ...args) {
-        Map<String, Object> result = new HashMap<>();
         return template.queryForMap(sql, args);
     }
 

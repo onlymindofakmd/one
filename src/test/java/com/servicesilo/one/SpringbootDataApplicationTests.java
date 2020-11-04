@@ -1,10 +1,12 @@
 package com.servicesilo.one;
 
 import com.servicesilo.one.datasource.CommonDAO;
+import com.servicesilo.one.model.ServiceUser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.sql.DataSource;
@@ -20,6 +22,9 @@ public class SpringbootDataApplicationTests {
     @Autowired
     CommonDAO dao;
 
+    @Autowired
+    RedisTemplate<String, Object> template;
+
     @Test
     public void contextLoads() throws SQLException {
 //       查看默认数据源 class com.zaxxer.hikari.HikariDataSource
@@ -33,7 +38,12 @@ public class SpringbootDataApplicationTests {
 
     @Test
     public void testTemplate() {
-        String sql = "insert into service_user(uuid, user_name, password) values(?, ?, ?) ";
-        dao.addOrUpdate(sql, "0", "admin", "admin");
+
+    }
+
+    @Test
+    public void testRedis() {
+        template.opsForValue().set("123", "test");
+        System.out.println(template.opsForValue().get("123"));
     }
 }

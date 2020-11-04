@@ -25,8 +25,8 @@ public class CoreController {
      * @param params
      */
     public void save(@RequestBody Map<String, Object> params) {
-        String tableId = params.get("tableId").toString();
-        service.save(tableId, params);
+        String linkId = params.get("link_id").toString();
+        service.save(linkId, params);
     }
 
     /**
@@ -48,21 +48,10 @@ public class CoreController {
     @ResponseBody
     @PostMapping(value = "/query")
     public CommonRet query(@RequestParam Map<String, Object> params) {
-        String tableId = params.remove("tableId").toString();
-        String status = params.remove("status").toString();
-        String token = params.remove("access_token").toString();
-        System.out.println(tableId+ status + token);
-        List<Map<String, Object>> results = service.list(tableId,
-                status, params, RedisUtil.getUser(token));
-        return RetUtil.success(results);
-    }
-
-    @ResponseBody
-    @PostMapping(value = "/handleLink")
-    public CommonRet handleLink(@RequestParam Map<String, Object> params) {
         String linkId = params.get("link_id").toString();
-        ServiceNodeLink link = RedisUtil.getLink(linkId);
-        return RetUtil.success();
+        String token = params.remove("access_token").toString();
+        List<Map<String, Object>> results = service.list(linkId, params, RedisUtil.getUser(token));
+        return RetUtil.success(results);
     }
 
     /**

@@ -17,6 +17,8 @@ public class ServiceNodeLink {
     private String nodeId;
     private String linkTo;
     private String tableId;
+    private String linkShowCols;
+    private String linkOptCols;
     private String roleId;
     private String userId;
 

@@ -1,6 +1,7 @@
 package com.servicesilo.one.util;
 
 import com.servicesilo.one.dict.TrueOrFalse;
+import com.servicesilo.one.model.ServiceNodeLink;
 import com.servicesilo.one.model.ServiceTable;
 import com.servicesilo.one.model.ServiceTableCol;
 import com.servicesilo.one.model.ServiceUser;
@@ -23,7 +24,7 @@ public class TableUtil {
     }
 
 
-    public static String makeAddSql(String tableId, Set<String> keys) {
+    public static String makeAddSql(String tableId, List<String> keys) {
         StringBuilder sb = new StringBuilder();
         ServiceTable table = getTable(tableId);
         assert table != null;
@@ -45,37 +46,34 @@ public class TableUtil {
         return sb.toString();
     }
 
-    public static String makeSearchSql(String tableId,
-                                       String status,
-                                       Set<String> keys,
+    public static String makeSearchSql(ServiceNodeLink link,
+                                       List<String> keys,
                                        ServiceUser user) {
+        String tableId = link.getTableId();
+        String status = link.getNodeId();
+        String showCols = link.getLinkShowCols();
         ServiceTable table = getTable(tableId);
         assert table != null;
         String tableName =  table.getTableCode();
         List<ServiceTableCol> cols = table.getCols();
         StringBuilder sb = new StringBuilder();
-        sb.append("select m.uuid");
+        sb.append("select m.uuid, ").append(showCols);
 
         Map<String , String> filterMap = new HashMap<>();
 
         for (ServiceTableCol col: cols) {
-            if (TrueOrFalse.FALSE.getCode().equals(col.getHideInSearch())) {
+            if (keys.contains(col.getColCode())) {
                 filterMap.put(col.getColCode(), col.getSearchType());
-            }
-
-            if (TrueOrFalse.FALSE.getCode().equals(col.getHideInTable())) {
-                sb.append(", ");
-                sb.append(col.getColCode());
             }
         }
 
         sb.append(" from ").append(tableName)
                 .append(" as m left join service_workflow_record swr on m.uuid = swr.data_id ");
 
-        sb.append(" where 1=1");
+        sb.append(" where 1=1 ");
 
         if (!StringUtils.isEmpty(status)) {
-            sb.append(" swr.node_id = ? ");
+            sb.append(" and swr.node_id =  ").append(status);
         }
 
         for (String key: keys) {

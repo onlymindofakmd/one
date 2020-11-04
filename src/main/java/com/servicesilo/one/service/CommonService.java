@@ -1,9 +1,11 @@
 package com.servicesilo.one.service;
 
 import com.servicesilo.one.datasource.CommonDAO;
+import com.servicesilo.one.model.ServiceNodeLink;
 import com.servicesilo.one.model.ServiceTable;
 import com.servicesilo.one.model.ServiceTableCol;
 import com.servicesilo.one.model.ServiceUser;
+import com.servicesilo.one.util.RedisUtil;
 import com.servicesilo.one.util.TableUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,21 +26,25 @@ public class CommonService {
      * 获取列表展示数据
      * @return 列表数据
      */
-    public List<Map<String, Object>> list(String tableId,
-                                          String status,
+    public List<Map<String, Object>> list(String linkId,
                                           Map<String, Object> params,
                                           ServiceUser user) {
         // 这里需要确保这些key对应的值都不为空。
-        Set<String> keys = params.keySet();
+        ServiceNodeLink link = RedisUtil.getLink(linkId);
+        String optCols = link.getLinkOptCols();
+
+        List<String> keys = new ArrayList<>();
         List<Object> values = new ArrayList<>();
-        if (!StringUtils.isEmpty(status)) {
-            values.add(status);
-        }
-        for (String key: keys) {
-            values.add(params.get(key));
+
+        for (String col: optCols.split(",")) {
+            Object val = params.get(col);
+            if (val != null && !StringUtils.isEmpty(val.toString())) {
+                keys.add(col);
+                values.add(val);
+            }
         }
 
-        String sql = TableUtil.makeSearchSql(tableId, status, keys, user);
+        String sql = TableUtil.makeSearchSql(link, keys, user);
         return dao.find(sql, values.toArray());
     }
 
@@ -54,15 +60,24 @@ public class CommonService {
         return dao.findOne(sql, args);
     }
 
-    public void save(String tableId, Map<String, Object> params) {
-        // TODO 这里的keys包含很多不需要的字段，后期测试需要看下能不能把不要的字段都删除掉。
-        Set<String> keys = params.keySet();
+    public List<Map<String, Object>> findBySql(String sql, Object ...args) {
+        return dao.find(sql, args);
+    }
+
+    public void save(String linkId, Map<String, Object> params) {
+        ServiceNodeLink link = RedisUtil.getLink(linkId);
+        String optCols = link.getLinkOptCols();
+        List<String> keys = new ArrayList<>();
         List<Object> values = new ArrayList<>();
-        values.add("uuid");
-        for (String key: keys) {
-            values.add(params.get(key));
+
+        for (String col: optCols.split(",")) {
+            Object val = params.get(col);
+            if (val != null && !StringUtils.isEmpty(val.toString())) {
+                keys.add(col);
+                values.add(val);
+            }
         }
-        String sql = TableUtil.makeAddSql(tableId, keys);
+        String sql = TableUtil.makeAddSql(linkId, keys);
         dao.addOrUpdate(sql, values.toArray());
     }
 }
