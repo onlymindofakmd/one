@@ -12,7 +12,7 @@ public class ServiceWorkflowNode {
     private String uuid;
     private String nodeName;
     private String nodeType;
-    private String nodeRoleId;
+    private String nodeDesc;
     private String workflowId;
 
 }

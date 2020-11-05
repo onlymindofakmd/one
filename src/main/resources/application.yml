@@ -19,5 +19,10 @@ spring:
     port: 5672
     username: admin
     password: admin
+    publisher-confirm-type: correlated
+    listener:
+      simple:
+        acknowledge-mode: manual
+    virtual-host: my_vhost
 server:
   port: 8081

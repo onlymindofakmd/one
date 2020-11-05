@@ -127,7 +127,7 @@ public class RedisUtil {
                         .colType(col.get("col_type").toString())
                         .searchType(col.get("search_type").toString())
                         .colLength(col.get("col_length").toString())
-                        .orderNum(col.get("order_num").toString())
+                        .orderNum((int)col.get("order_num"))
                         .uuid(col.get("uuid").toString())
                         .tableId(col.get("table_id").toString())
                         .build());

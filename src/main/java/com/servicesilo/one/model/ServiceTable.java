@@ -17,6 +17,4 @@ public class ServiceTable {
     private String tableType;
 
     private List<ServiceTableCol> cols;
-    private List<ServiceNodeLink> opts;
-    private List<ServiceWorkflow> workflows;
 }

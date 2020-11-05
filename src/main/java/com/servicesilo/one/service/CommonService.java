@@ -50,7 +50,7 @@ public class CommonService {
 
 
     public Map<String, Object> findById(String tableId, String uuid) {
-        ServiceTable table = TableUtil.getTable(tableId);
+        ServiceTable table = RedisUtil.getTable(tableId);
         assert table != null;
         String sql = "select * from " + table.getTableCode() + " where uuid = ?";
         return dao.findOne(sql, uuid);

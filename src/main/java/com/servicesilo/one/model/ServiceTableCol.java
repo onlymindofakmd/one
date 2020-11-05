@@ -15,7 +15,7 @@ public class ServiceTableCol {
     private String colLength;
     private String colType;
     private String searchType;
-    private String orderNum;
+    private Integer orderNum;
     private String tableId;
 
 }

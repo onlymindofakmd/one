@@ -24,24 +24,8 @@ public class CommonDAO {
         template.update(sql, params);
     }
 
-    public List<Map<String, Object>> find(String sql,
-//                                          List<ServiceTableCol> cols,
-                                          Object ...args) {
-//        List<Map<String, Object>> results = new ArrayList<>();
-//        template.query(sql, resultSet -> {
-//            while (resultSet.next()) {
-//                Map<String, Object> bean = new HashMap<>();
-//                for (ServiceTableCol col: cols) {
-//                    Object value = TableUtil.getColValue(col.getColType());
-//                    if (value != null) {
-//                        bean.put(col.getColCode(), value);
-//                    }
-//                }
-//                results.add(bean);
-//            }
-//        },args);
+    public List<Map<String, Object>> find(String sql, Object ...args) {
         return template.queryForList(sql, args);
-//        return results;
     }
 
     public Map<String, Object> findOne(String sql, Object ...args) {

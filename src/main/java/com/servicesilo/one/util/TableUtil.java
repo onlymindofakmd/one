@@ -10,23 +10,12 @@ import org.springframework.util.StringUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class TableUtil {
 
-    public static Object getColValue(String colType) {
-        return null;
-    }
-
-    public static ServiceTable getTable(String tableId) {
-
-        return null;
-    }
-
-
     public static String makeAddSql(String tableId, List<String> keys) {
         StringBuilder sb = new StringBuilder();
-        ServiceTable table = getTable(tableId);
+        ServiceTable table = RedisUtil.getTable(tableId);
         assert table != null;
         StringBuilder fields = new StringBuilder("uuid");
         StringBuilder vs = new StringBuilder("?");
@@ -52,7 +41,7 @@ public class TableUtil {
         String tableId = link.getTableId();
         String status = link.getNodeId();
         String showCols = link.getLinkShowCols();
-        ServiceTable table = getTable(tableId);
+        ServiceTable table = RedisUtil.getTable(tableId);
         assert table != null;
         String tableName =  table.getTableCode();
         List<ServiceTableCol> cols = table.getCols();
