@@ -14,6 +14,13 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * CoreController 这里就是整个项目的核心服务。这里提供的服务全部基于配置实现，
+ * 理论上讲可以通过配置实现任何复杂的功能。
+ * 项目初期计划是根据这样配置来动态实现各种服务，之后可以考虑通过代码生成、热部署等技术实现静态代码情况下的提供同样服务
+ *
+ * 注：没有实现的方法是还没有确定好的方法可能随时会删除掉，要根据以后研究判定是否需要对应的方法
+ */
 @Controller
 @RequestMapping("/core")
 public class CoreController {
@@ -77,7 +84,7 @@ public class CoreController {
     }
 
     /**
-     * 用于工作流开启服务。
+     * 用于工作流开启服务。暂时弃用
      */
     public void start(@RequestBody Map<String, Object> params) {
 
