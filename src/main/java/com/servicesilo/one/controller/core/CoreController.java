@@ -25,7 +25,7 @@ public class CoreController {
     private RedisUtil redisUtil;
 
     /**
-     * 保存服务
+     * 根据linkId 查询到保存操作对应的link，进而获得link中包含的linkOptCols， tableId等信息，然后保存。
      * @param params
      */
     public void save(@RequestBody Map<String, Object> params) {
@@ -35,6 +35,11 @@ public class CoreController {
         service.save(link, table, params);
     }
 
+    /**
+     * 同样获取对应link，然后获取tableId，linkShowCols等信息，完成页面展示。
+     * @param linkId
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/show")
     public CommonRet show(@RequestParam String linkId) {
@@ -56,6 +61,7 @@ public class CoreController {
 
     /**
      * 查询服务
+     * 获取link 然后得到tableId和linkOptCols(这个是查询项目) 然后拼接sql查询
      * @param params
      * @return
      */

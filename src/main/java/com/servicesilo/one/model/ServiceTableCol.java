@@ -2,6 +2,9 @@ package com.servicesilo.one.model;
 
 import lombok.*;
 
+/**
+ * 表单对应的字段，根据具体情况可能需要扩展
+ */
 @Getter
 @Setter
 @Builder

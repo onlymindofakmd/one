@@ -4,6 +4,9 @@ import lombok.*;
 
 import java.util.List;
 
+/**
+ * 流程表， 这里新增流程主要为了配置表单的时候选择对应流程
+ */
 @Getter
 @Setter
 @Builder
