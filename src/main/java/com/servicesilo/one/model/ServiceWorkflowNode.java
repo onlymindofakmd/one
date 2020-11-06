@@ -1,12 +1,12 @@
 package com.servicesilo.one.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor // 不添加下面两个注解会报错
+@AllArgsConstructor
 public class ServiceWorkflowNode {
 
     private String uuid;

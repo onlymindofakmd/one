@@ -24,8 +24,6 @@ public class TopicManReceiver {
             System.out.println("Message: "+message.getMessageProperties().toString());
             System.out.println("Redelivered: "+ message.getMessageProperties().getDeliveryTag());
             // 这里模拟一个空指针异常，
-            String string = null;
-            string.length();
 
             log.info("【Consumer01成功接收到消息】>>> {}", msg);
             // 手动-成功确认  param1-deliveryTag-单调递增正整数，此条消息的唯一ID  param2-false-确认单条-true-一次性确认 delivery_tag 小于等于传入值的所有消息

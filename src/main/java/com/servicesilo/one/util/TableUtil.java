@@ -1,10 +1,10 @@
 package com.servicesilo.one.util;
 
-import com.servicesilo.one.dict.TrueOrFalse;
 import com.servicesilo.one.model.ServiceNodeLink;
 import com.servicesilo.one.model.ServiceTable;
 import com.servicesilo.one.model.ServiceTableCol;
 import com.servicesilo.one.model.ServiceUser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
@@ -13,9 +13,11 @@ import java.util.Map;
 
 public class TableUtil {
 
-    public static String makeAddSql(String tableId, List<String> keys) {
+    @Autowired
+    private RedisUtil redisUtil;
+
+    public static String makeAddSql(ServiceTable table, List<String> keys) {
         StringBuilder sb = new StringBuilder();
-        ServiceTable table = RedisUtil.getTable(tableId);
         assert table != null;
         StringBuilder fields = new StringBuilder("uuid");
         StringBuilder vs = new StringBuilder("?");
@@ -36,12 +38,12 @@ public class TableUtil {
     }
 
     public static String makeSearchSql(ServiceNodeLink link,
+                                       ServiceTable table,
                                        List<String> keys,
                                        ServiceUser user) {
         String tableId = link.getTableId();
         String status = link.getNodeId();
         String showCols = link.getLinkShowCols();
-        ServiceTable table = RedisUtil.getTable(tableId);
         assert table != null;
         String tableName =  table.getTableCode();
         List<ServiceTableCol> cols = table.getCols();

@@ -14,7 +14,6 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Service
 public class CommonService {
@@ -22,15 +21,26 @@ public class CommonService {
     @Autowired
     private CommonDAO dao;
 
+    public List<ServiceTableCol> show(ServiceNodeLink link, ServiceTable table) {
+        List<ServiceTableCol> ls = new ArrayList<>();
+        for (ServiceTableCol col: table.getCols()) {
+            if (link.getLinkShowCols().contains(col.getColCode())) {
+                ls.add(col);
+            }
+        }
+
+        return ls;
+    }
+
+
     /**
      * 获取列表展示数据
      * @return 列表数据
      */
-    public List<Map<String, Object>> list(String linkId,
+    public List<Map<String, Object>> list(ServiceNodeLink link,
+                                          ServiceTable table,
                                           Map<String, Object> params,
                                           ServiceUser user) {
-        // 这里需要确保这些key对应的值都不为空。
-        ServiceNodeLink link = RedisUtil.getLink(linkId);
         String optCols = link.getLinkOptCols();
 
         List<String> keys = new ArrayList<>();
@@ -44,13 +54,12 @@ public class CommonService {
             }
         }
 
-        String sql = TableUtil.makeSearchSql(link, keys, user);
+        String sql = TableUtil.makeSearchSql(link, table, keys, user);
         return dao.find(sql, values.toArray());
     }
 
 
-    public Map<String, Object> findById(String tableId, String uuid) {
-        ServiceTable table = RedisUtil.getTable(tableId);
+    public Map<String, Object> findById(ServiceTable table, String uuid) {
         assert table != null;
         String sql = "select * from " + table.getTableCode() + " where uuid = ?";
         return dao.findOne(sql, uuid);
@@ -64,8 +73,7 @@ public class CommonService {
         return dao.find(sql, args);
     }
 
-    public void save(String linkId, Map<String, Object> params) {
-        ServiceNodeLink link = RedisUtil.getLink(linkId);
+    public void save(ServiceNodeLink link, ServiceTable table, Map<String, Object> params) {
         String optCols = link.getLinkOptCols();
         List<String> keys = new ArrayList<>();
         List<Object> values = new ArrayList<>();
@@ -77,7 +85,7 @@ public class CommonService {
                 values.add(val);
             }
         }
-        String sql = TableUtil.makeAddSql(linkId, keys);
+        String sql = TableUtil.makeAddSql(table, keys);
         dao.addOrUpdate(sql, values.toArray());
     }
 }

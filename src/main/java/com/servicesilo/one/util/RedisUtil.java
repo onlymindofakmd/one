@@ -9,23 +9,29 @@ import com.servicesilo.one.model.ServiceUser;
 import com.servicesilo.one.service.CommonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class RedisUtil {
     private static final String TOKEN_STR = "TOKEN_";
     private static final String LINK_STR = "LINK_";
     private static final String TABLE_STR = "TABLE_";
 
-    @Autowired
-    private static RedisTemplate<String, Object> template;
+    public RedisUtil(RedisTemplate<String, Object> redisTemplate) {
+        this.template = redisTemplate;
+    }
 
     @Autowired
-    private static CommonService commonService;
+    private RedisTemplate<String, Object> template;
 
-    public static ServiceUser getUser(String token) {
+    @Autowired
+    private CommonService commonService;
+
+    public ServiceUser getUser(String token) {
         Object user = template.opsForValue().get(TOKEN_STR + token);
         if (user == null) {
             String userId;
@@ -52,11 +58,11 @@ public class RedisUtil {
         return (ServiceUser)user;
     }
 
-    public static void setUser(ServiceUser user, String token) {
+    public void setUser(ServiceUser user, String token) {
         template.opsForValue().set(TOKEN_STR + token, user);
     }
 
-    public static ServiceNodeLink getLink(String linkId) {
+    public ServiceNodeLink getLink(String linkId) {
         Object link = template.opsForValue().get(LINK_STR + linkId);
         if (link == null) {
             String sql = "select * from service_node_link where (uuid = ? or parent_link_id = ?)";
@@ -98,15 +104,15 @@ public class RedisUtil {
         return (ServiceNodeLink)link;
     }
 
-    public static void setLink (ServiceNodeLink link) {
+    public void setLink (ServiceNodeLink link) {
         template.opsForValue().set(LINK_STR + link.getUuid(), link);
     }
 
-    public static void setTable (ServiceTable table) {
+    public void setTable (ServiceTable table) {
         template.opsForValue().set(TABLE_STR + table.getUuid(), table);
     }
 
-    public static ServiceTable getTable (String tableId) {
+    public ServiceTable getTable (String tableId) {
         Object tab = template.opsForValue().get(TABLE_STR + tableId);
         if (tab == null) {
             String sql = "select * from service_table where uuid = ? ";
