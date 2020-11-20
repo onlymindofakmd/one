@@ -36,7 +36,8 @@ public class RedisUtil {
         if (user == null) {
             String userId;
             try {
-                userId = JWT.decode(token).getAudience().get(0);
+//                userId = JWT.decode(token).getAudience().get(0);
+                userId = "1abc2";
             } catch (JWTDecodeException j) {
                 throw new RuntimeException("401");
             }
@@ -46,11 +47,11 @@ public class RedisUtil {
                 throw new RuntimeException("用户不存在，请重新登录");
             } else {
                 user = ServiceUser.builder().
-                        groupId(temp.get("group_id").toString()).
-                        uuid(temp.get("uuid").toString()).
-                        loginName(temp.get("login_name").toString()).
-                        realName(temp.get("real_name").toString()).
-                        roleId(temp.get("role_id").toString()).
+                        groupId(obj2Str(temp.get("group_id"))).
+                        uuid(obj2Str(temp.get("uuid"))).
+                        loginName(obj2Str(temp.get("login_name"))).
+                        realName(obj2Str(temp.get("real_name"))).
+                        roleId(obj2Str(temp.get("role_id"))).
                         build();
             }
             setUser((ServiceUser)user, token);
@@ -65,35 +66,37 @@ public class RedisUtil {
     public ServiceNodeLink getLink(String linkId) {
         Object link = template.opsForValue().get(LINK_STR + linkId);
         if (link == null) {
-            String sql = "select * from service_node_link where (uuid = ? or parent_link_id = ?)";
+            String sql = "select * from service_node_link where (uuid = ? or uuid in (select sub_link_id from service_link_r where link_id = ?))";
             List<Map<String, Object>> temps = commonService.findBySql(sql, linkId, linkId);
             List<ServiceNodeLink> subLinks = new ArrayList<>();
             for (Map<String, Object> temp: temps) {
                 if (temp.get("uuid").toString().equals(linkId)) {
                     link = ServiceNodeLink.builder()
-                            .linkName(temp.get("link_name").toString())
-                            .linkOptCols(temp.get("link_opt_cols").toString())
-                            .linkShowCols(temp.get("link_show_cols").toString())
-                            .linkTo(temp.get("link_to").toString())
-                            .linkType(temp.get("link_type").toString())
-                            .nodeId(temp.get("node_id").toString())
-                            .roleId(temp.get("role_id").toString())
-                            .tableId(temp.get("table_id").toString())
-                            .userId(temp.get("user_id").toString())
-                            .uuid(temp.get("uuid").toString())
+                            .linkName(obj2Str(temp.get("link_name")))
+                            .linkOptCols(obj2Str(temp.get("link_opt_cols")))
+                            .linkShowCols(obj2Str(temp.get("link_show_cols")))
+                            .linkTo(obj2Str(temp.get("link_to")))
+                            .linkFunc(obj2Str(temp.get("link_func")))
+                            .linkType(obj2Str(temp.get("link_type")))
+                            .nodeId(obj2Str(temp.get("node_id")))
+                            .roleId(obj2Str(temp.get("role_id")))
+                            .tableId(obj2Str(temp.get("table_id")))
+                            .userId(obj2Str(temp.get("user_id")))
+                            .uuid(obj2Str(temp.get("uuid")))
                             .build();
                 } else {
                     subLinks.add(ServiceNodeLink.builder()
-                            .linkName(temp.get("link_name").toString())
-                            .linkOptCols(temp.get("link_opt_cols").toString())
-                            .linkShowCols(temp.get("link_show_cols").toString())
-                            .linkTo(temp.get("link_to").toString())
-                            .linkType(temp.get("link_type").toString())
-                            .nodeId(temp.get("node_id").toString())
-                            .roleId(temp.get("role_id").toString())
-                            .tableId(temp.get("table_id").toString())
-                            .userId(temp.get("user_id").toString())
-                            .uuid(temp.get("uuid").toString())
+                            .linkName(obj2Str(temp.get("link_name")))
+                            .linkOptCols(obj2Str(temp.get("link_opt_cols")))
+                            .linkShowCols(obj2Str(temp.get("link_show_cols")))
+                            .linkTo(obj2Str(temp.get("link_to")))
+                            .linkFunc(obj2Str(temp.get("link_func")))
+                            .linkType(obj2Str(temp.get("link_type")))
+                            .nodeId(obj2Str(temp.get("node_id")))
+                            .roleId(obj2Str(temp.get("role_id")))
+                            .tableId(obj2Str(temp.get("table_id")))
+                            .userId(obj2Str(temp.get("user_id")))
+                            .uuid(obj2Str(temp.get("uuid")))
                             .build());
                 }
             }
@@ -118,9 +121,9 @@ public class RedisUtil {
             String sql = "select * from service_table where uuid = ? ";
             Map<String, Object> temp = commonService.findOneBySql(sql, tableId);
             tab = ServiceTable.builder()
-                    .tableCode(temp.get("table_code").toString())
-                    .tableName(temp.get("table_name").toString())
-                    .tableType(temp.get("table_type").toString())
+                    .tableCode(obj2Str(temp.get("table_code")))
+                    .tableName(obj2Str(temp.get("table_name")))
+                    .tableType(obj2Str(temp.get("table_type")))
                     .uuid(temp.get("uuid").toString()).build();
             String sqlCols = "select * from service_table_col where table_id = ? ";
             List<Map<String, Object>> ls = commonService.findBySql(sqlCols, tableId);
@@ -128,14 +131,15 @@ public class RedisUtil {
             for (Map<String, Object> col: ls) {
                 cols.add(ServiceTableCol
                         .builder()
-                        .colCode(col.get("col_code").toString())
-                        .colName(col.get("col_name").toString())
-                        .colType(col.get("col_type").toString())
-                        .searchType(col.get("search_type").toString())
-                        .colLength(col.get("col_length").toString())
+                        .colCode(obj2Str(col.get("col_code")))
+                        .colName(obj2Str(col.get("col_name")))
+                        .colType(obj2Str(col.get("col_type")))
+                        .searchType(obj2Str(col.get("search_type")))
+                        .colLength(obj2Str(col.get("col_length")))
                         .orderNum((int)col.get("order_num"))
-                        .uuid(col.get("uuid").toString())
-                        .tableId(col.get("table_id").toString())
+                        .uuid(obj2Str(col.get("uuid")))
+                        .tableId(obj2Str(col.get("table_id")))
+                        .colPlaceholder(obj2Str(col.get("table_id")))
                         .build());
             }
             ((ServiceTable)tab).setCols(cols);
@@ -144,4 +148,9 @@ public class RedisUtil {
         }
         return (ServiceTable)tab;
     }
+
+    private String obj2Str(Object obj) {
+        return obj == null? null: obj.toString();
+    }
 }
+

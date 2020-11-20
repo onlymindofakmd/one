@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,15 +22,21 @@ public class CommonService {
     @Autowired
     private CommonDAO dao;
 
-    public List<ServiceTableCol> show(ServiceNodeLink link, ServiceTable table) {
+    public Map<String, Object> show(ServiceNodeLink link, ServiceTable table) {
+        Map<String, Object> map = new HashMap<>();
         List<ServiceTableCol> ls = new ArrayList<>();
         for (ServiceTableCol col: table.getCols()) {
             if (link.getLinkShowCols().contains(col.getColCode())) {
+                if (!link.getLinkOptCols().contains(col.getColCode())) {
+                    col.setSearchType("999");
+                }
                 ls.add(col);
             }
         }
-
-        return ls;
+        map.put("fieldList", ls);
+        map.put("formName", table.getTableName());
+        map.put("links", link.getSubLinks());
+        return map;
     }
 
 

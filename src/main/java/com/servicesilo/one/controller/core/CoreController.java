@@ -75,7 +75,7 @@ public class CoreController {
     @ResponseBody
     @PostMapping(value = "/query")
     public CommonRet query(@RequestParam Map<String, Object> params) {
-        String linkId = params.get("link_id").toString();
+        String linkId = params.get("linkId").toString();
         String token = params.remove("access_token").toString();
         ServiceNodeLink link = redisUtil.getLink(linkId);
         ServiceTable table = redisUtil.getTable(link.getTableId());

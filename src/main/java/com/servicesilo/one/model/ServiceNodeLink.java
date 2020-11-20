@@ -22,6 +22,7 @@ public class ServiceNodeLink {
     private String nodeId;
     // 目标节点
     private String linkTo;
+    private String linkFunc;
     // 操作的tableId
     private String tableId;
     // 页面展示的col
