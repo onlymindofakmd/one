@@ -43,7 +43,7 @@ public class CoreController {
     }
 
     /**
-     * 同样获取对应link，然后获取tableId，linkShowCols等信息，完成页面展示。
+     * 同样获取对应link，然后获取tableId，linkShowCols等信息，完成页面展示(包括列表页、新增页、)。
      * @param linkId
      * @return
      */
@@ -53,6 +53,17 @@ public class CoreController {
         ServiceNodeLink link = redisUtil.getLink(linkId);
         ServiceTable table = redisUtil.getTable(link.getTableId());
         return RetUtil.success(service.show(link, table));
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/edit")
+    public CommonRet edit(@RequestParam String linkId, @RequestParam String id) {
+        ServiceNodeLink link = redisUtil.getLink(linkId);
+        ServiceTable table = redisUtil.getTable(link.getTableId());
+        Map<String, Object> result = service.show(link, table);
+        Map<String, Object> obj = service.findById(table, id);
+        result.put("model", obj);
+        return RetUtil.success(result);
     }
 
     /**

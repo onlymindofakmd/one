@@ -34,7 +34,7 @@ public class CommonService {
             }
         }
         map.put("fieldList", ls);
-        map.put("formName", table.getTableName());
+        map.put("formName", link.getLinkName());
         map.put("links", link.getSubLinks());
         return map;
     }
