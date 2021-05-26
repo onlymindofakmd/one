@@ -2,10 +2,7 @@ package com.servicesilo.one.util;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.servicesilo.one.model.ServiceNodeLink;
-import com.servicesilo.one.model.ServiceTable;
-import com.servicesilo.one.model.ServiceTableCol;
-import com.servicesilo.one.model.ServiceUser;
+import com.servicesilo.one.model.*;
 import com.servicesilo.one.service.CommonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -18,7 +15,7 @@ import java.util.Map;
 @Component
 public class RedisUtil {
     private static final String TOKEN_STR = "TOKEN_";
-    private static final String LINK_STR = "LINK_";
+    private static final String LINE_STR = "LINE_";
     private static final String TABLE_STR = "TABLE_";
 
     public RedisUtil(RedisTemplate<String, Object> redisTemplate) {
@@ -36,8 +33,8 @@ public class RedisUtil {
         if (user == null) {
             String userId;
             try {
-//                userId = JWT.decode(token).getAudience().get(0);
-                userId = "1abc2";
+                userId = JWT.decode(token).getAudience().get(0);
+//                userId = "1abc2";
             } catch (JWTDecodeException j) {
                 throw new RuntimeException("401");
             }
@@ -63,52 +60,50 @@ public class RedisUtil {
         template.opsForValue().set(TOKEN_STR + token, user);
     }
 
-    public ServiceNodeLink getLink(String linkId) {
-        Object link = template.opsForValue().get(LINK_STR + linkId);
-        if (link == null) {
-            String sql = "select * from service_node_link where (uuid = ? or uuid in (select sub_link_id from service_link_r where link_id = ?))";
+    public Line getLink(String linkId) {
+        Object line = template.opsForValue().get(LINE_STR + linkId);
+        if (line == null) {
+            String sql = "select * from core_line where (uuid = ? or parentId = ? )";
             List<Map<String, Object>> temps = commonService.findBySql(sql, linkId, linkId);
-            List<ServiceNodeLink> subLinks = new ArrayList<>();
+            List<Line> subLinks = new ArrayList<>();
             for (Map<String, Object> temp: temps) {
                 if (temp.get("uuid").toString().equals(linkId)) {
-                    link = ServiceNodeLink.builder()
-                            .linkName(obj2Str(temp.get("link_name")))
-                            .linkOptCols(obj2Str(temp.get("link_opt_cols")))
-                            .linkShowCols(obj2Str(temp.get("link_show_cols")))
-                            .linkTo(obj2Str(temp.get("link_to")))
-                            .linkFunc(obj2Str(temp.get("link_func")))
-                            .linkType(obj2Str(temp.get("link_type")))
-                            .nodeId(obj2Str(temp.get("node_id")))
-                            .roleId(obj2Str(temp.get("role_id")))
+                    line = Line.builder()
+                            .name(obj2Str(temp.get("name")))
+                            .reqCols(obj2Str(temp.get("req_cols")))
+                            .resCols(obj2Str(temp.get("res_cols")))
+                            .end(obj2Str(temp.get("end")))
+                            .service(obj2Str(temp.get("service")))
+                            .start(obj2Str(temp.get("node_id")))
+                            .roles(obj2Str(temp.get("roles")))
                             .tableId(obj2Str(temp.get("table_id")))
-                            .userId(obj2Str(temp.get("user_id")))
                             .uuid(obj2Str(temp.get("uuid")))
+                            .parentId(obj2Str(temp.get("parent_id")))
                             .build();
                 } else {
-                    subLinks.add(ServiceNodeLink.builder()
-                            .linkName(obj2Str(temp.get("link_name")))
-                            .linkOptCols(obj2Str(temp.get("link_opt_cols")))
-                            .linkShowCols(obj2Str(temp.get("link_show_cols")))
-                            .linkTo(obj2Str(temp.get("link_to")))
-                            .linkFunc(obj2Str(temp.get("link_func")))
-                            .linkType(obj2Str(temp.get("link_type")))
-                            .nodeId(obj2Str(temp.get("node_id")))
-                            .roleId(obj2Str(temp.get("role_id")))
+                    subLinks.add(Line.builder()
+                            .name(obj2Str(temp.get("name")))
+                            .reqCols(obj2Str(temp.get("req_cols")))
+                            .resCols(obj2Str(temp.get("res_cols")))
+                            .end(obj2Str(temp.get("end")))
+                            .service(obj2Str(temp.get("service")))
+                            .start(obj2Str(temp.get("node_id")))
+                            .roles(obj2Str(temp.get("roles")))
                             .tableId(obj2Str(temp.get("table_id")))
-                            .userId(obj2Str(temp.get("user_id")))
                             .uuid(obj2Str(temp.get("uuid")))
+                            .parentId(obj2Str(temp.get("parent_id")))
                             .build());
                 }
             }
-            assert link != null;
-            ((ServiceNodeLink) link).setSubLinks(subLinks);
-            setLink((ServiceNodeLink) link);
+            assert line != null;
+            ((Line) line).setSubLines(subLinks);
+            setLine((Line) line);
         }
-        return (ServiceNodeLink)link;
+        return (Line)line;
     }
 
-    public void setLink (ServiceNodeLink link) {
-        template.opsForValue().set(LINK_STR + link.getUuid(), link);
+    public void setLine (Line line) {
+        template.opsForValue().set(LINE_STR + line.getUuid(), line);
     }
 
     public void setTable (ServiceTable table) {
