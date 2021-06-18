@@ -1,11 +1,9 @@
 package com.servicesilo.one.service;
 
 import com.servicesilo.one.datasource.CommonDAO;
-import com.servicesilo.one.model.ServiceNodeLink;
 import com.servicesilo.one.model.ServiceTable;
 import com.servicesilo.one.model.ServiceTableCol;
 import com.servicesilo.one.model.ServiceUser;
-import com.servicesilo.one.util.RedisUtil;
 import com.servicesilo.one.util.TableUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

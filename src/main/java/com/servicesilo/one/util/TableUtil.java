@@ -1,9 +1,6 @@
 package com.servicesilo.one.util;
 
-import com.servicesilo.one.model.ServiceNodeLink;
-import com.servicesilo.one.model.ServiceTable;
-import com.servicesilo.one.model.ServiceTableCol;
-import com.servicesilo.one.model.ServiceUser;
+import com.servicesilo.one.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
@@ -97,6 +94,22 @@ public class TableUtil {
         sb.append(PermissionUtil.getPermission(user));
 
         return sb.toString();
+    }
+
+    public static String makeSearchSql(Line lin,
+                                        ServiceTable table,
+                                        List<String> keys,
+                                        ServiceUser user) {
+
+        return "";
+    }
+
+    public static String makeSearchSqlWithPage(Line lin,
+                                       ServiceTable table,
+                                       List<String> keys,
+                                       ServiceUser user) {
+
+        return "";
     }
 
 }

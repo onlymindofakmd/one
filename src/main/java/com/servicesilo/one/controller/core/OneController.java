@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.annotation.Resource;
 import java.util.Map;
 
-public class OnlyController {
+public class OneController {
 
     @Resource
     private RedisUtil redisUtil;
